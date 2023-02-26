@@ -4,9 +4,7 @@
 #include <time.h>
 #include <math.h>
 
-#define N 5
-
-void generate_points(int *x, int *y){
+void generate_points(int *x, int *y, int N){
     srand(time(0));
     int i;
     for(i=0;i<N;i++){
@@ -16,12 +14,11 @@ void generate_points(int *x, int *y){
     }
 }
 
-double d(int x1,int y1,int x2,int y2){
-    return sqrt(pow(x1-x2,2)+pow(y1-y2,2));
-}
 
-int main(){
+int main(int argc, char *argv[]){
+    int N = atoi(argv[1]);
     int *x, *y;
+    int i;
     x = (int *) malloc(N*sizeof(int));
     y = (int *) malloc(N*sizeof(int));
 
@@ -30,11 +27,17 @@ int main(){
         return 1;
     }
 
-    generate_points(x,y);
+    generate_points(x,y,N);
+
+    FILE *f;
+    f = fopen("random_graph.txt","w");
+    fprintf(f,"%d\n",N);
+    for(i=0;i<N;i++)
+        fprintf(f,"%d\t%d\n",x[i],y[i]);
+    
 
 
 
-
-
+    fclose(f);
     return 0;
 }
