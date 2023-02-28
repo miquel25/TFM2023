@@ -4,34 +4,39 @@
 #include <time.h>
 #include <math.h>
 
-void read_graph()
+struct node {
+    int x, y;
+    int v; // 0 if not visited, 1 if visited
+};
 
-
-double d(int x1,int y1,int x2,int y2){
-    return sqrt(pow(x1-x2,2)+pow(y1-y2,2));
-}
+// double d(int x1,int y1,int x2,int y2){
+//     return sqrt(pow(x1-x2,2)+pow(y1-y2,2));
+// }
 
 int main(){
-    int *x, *y;
     int N, i;
+ 
     FILE *f;
     f = fopen("random_graph.txt","r");
 
     fscanf(f,"%d",&N);
-    printf("N = %d\n",N);
-    x = (int *) malloc(N*sizeof(int));
-    y = (int *) malloc(N*sizeof(int));
-
-    if(x==NULL || y==NULL){
+    struct node nodes[N];
+    
+    if(nodes==NULL){
         printf("Error when allocating memory for the points\n");
-        return 1;
+        exit;
     }
 
     for(i=0;i<N;i++){
-        fscanf(f,"%d\t%d",&x[i],&y[i]);
-        printf("(%d,%d)\n",x[i],y[i]);    
+        fscanf(f,"%d\t%d",&nodes[i].x,&nodes[i].y);
     }
 
     fclose(f);
+
+    printf("%d\n",N);
+    printf("(%d,%d)\n",nodes[N-1].x,nodes[N-1].y);
+    nodes[N-1].y = 3;
+    printf("(%d,%d)\n",nodes[N-1].x,nodes[N-1].y);
+ 
     return 0;
 }
