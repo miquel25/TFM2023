@@ -16,7 +16,7 @@ void generate_points(int *x, int *y, int N){
 
 
 int main(int argc, char *argv[]){
-    int N = atoi(argv[1]);
+    int N = 20;
     int *x, *y;
     int i;
     x = (int *) malloc(N*sizeof(int));
@@ -35,9 +35,6 @@ int main(int argc, char *argv[]){
     for(i=0;i<N;i++)
         fprintf(f,"%d\t%d\n",x[i],y[i]);
     
-
-
-
     fclose(f);
     return 0;
 }
