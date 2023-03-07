@@ -37,14 +37,15 @@ int * nearest_neighbour(int root, int N, struct node nodes[N], int *v){
         nodes[next].v = 1;
         current = next;
     }
-    D = D + d(nodes[N-1].x,nodes[N-1].y,nodes[root].x,nodes[root].y);
+    D = D + d(nodes[next].x,nodes[next].y,nodes[root].x,nodes[root].y);
     v[N]=root;
 
+    printf("NEAREST NEIGHBOUR\n----------------------------------------\n");
     for(i=0;i<N+1;i++)
         printf("%d\t",v[i]);
     printf("\n");
 
-    printf("Total distance: %.2lf\n", D);
+    printf("Total distance: %.2lf\n\n", D);
 
     FILE *f;
     f = fopen("TSP_NN.txt", "w");

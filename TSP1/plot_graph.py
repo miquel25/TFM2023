@@ -12,10 +12,11 @@ def plot_path(name, color):
 
     j = v[0]
     for i in v:
-        plt.plot([df[0][j],df[0][i]],[df[1][j],df[1][i]],color+'-')
+        plt.plot([df[0][j],df[0][i]],[df[1][j],df[1][i]],color+'-',linewidth=2)
         j = i
     plt.plot(df[0][0],df[1][0],'ro',ms=8)
-    plt.show()
 
 plot_path("TSP_NN.txt",'C0')
 plot_path("TSP_NI.txt",'C1')
+
+plt.show()

@@ -28,10 +28,14 @@ int * nearest_insertion(int root, int N, struct node nodes[N], int *v){
     }
     nodes[root].v = 1;
 
-    struct linked *first = (struct linked *) malloc(sizeof(struct linked));
-    struct linked *last = (struct linked *) malloc(sizeof(struct linked));
-    struct linked *temp = (struct linked *) malloc(sizeof(struct linked));
+    struct linked *first;
+    struct linked *last;
+    struct linked *temp;
     struct linked *iter;
+
+    first = (struct linked *) malloc(sizeof(struct linked));
+    last = (struct linked *) malloc(sizeof(struct linked));
+    temp = (struct linked *) malloc(sizeof(struct linked)); 
 
     if(first==NULL || last==NULL){
         printf("Error when allocating memory for the linked lists\n");
@@ -41,63 +45,101 @@ int * nearest_insertion(int root, int N, struct node nodes[N], int *v){
 //  FIND CLOSEST NODE TO ROOT
 
     double m = __DBL_MAX__;
-    int next;
+    int r;
     for(i=0;i<N;i++){
         if (nodes[i].v==0)
             if (m>d(nodes[root].x,nodes[root].y,nodes[i].x,nodes[i].y)){
                 m = d(nodes[root].x,nodes[root].y,nodes[i].x,nodes[i].y);
-                next = i;
+                r = i;
             }
     }
-
-    nodes[next].v = 1;
+    
+    D=m;
+    nodes[r].v = 1;
 
     // CONSTRUCT SUB-TOUR root-next-root
 
     first->n = root;
-    temp->n = next;
+    temp->n = r;
     last->n = root;
     first->next = temp;
     temp->next = last;
     last->next = NULL;
 
-// això va dins d'un altre loop
+    for(j=2;j<N;j++){
 
-    //  FIND NODE CLOSEST TO ANY ELEMENT OF SUB-TOUR
+        //  FIND NODE CLOSEST TO ANY ELEMENT OF SUB-TOUR
 
-    int current;
-    m = __DBL_MAX__;
-    for(i=0;i<N;i++){
-        if(nodes[i].v!=0){
-            iter = first;
-            while(iter!=NULL){
-                if (m<d(nodes[i].x,nodes[i].y,nodes[iter->n].x,nodes[iter->n].y)){
-                    m = d(nodes[i].x,nodes[i].y,nodes[iter->n].x,nodes[iter->n].y);
-                    current = iter->n;
-                    next = i;
+        m = __DBL_MAX__;
+        for(i=0;i<N;i++){
+            if(nodes[i].v==0){
+                iter = first;
+                while(iter!=NULL){
+                    if (m>d(nodes[i].x,nodes[i].y,nodes[iter->n].x,nodes[iter->n].y)){
+                        m = d(nodes[i].x,nodes[i].y,nodes[iter->n].x,nodes[iter->n].y);
+                        r = i;
+                    }
+                    iter = iter->next;
                 }
-            iter = iter->next;
             }
         }
+
+        
+
+        nodes[r].v = 1;
+
+        // FIND THE MINIMAL ARC
+
+        iter = first;
+        struct linked *iter2;
+        iter2 = first->next;
+        double c;
+        int current;
+        m = __DBL_MAX__;
+        while(iter2!=NULL){
+            c = d(nodes[iter->n].x,nodes[iter->n].y,nodes[r].x,nodes[r].y) + d(nodes[r].x,nodes[r].y,nodes[iter2->n].x,nodes[iter2->n].y) - d(nodes[iter->n].x,nodes[iter->n].y,nodes[iter2->n].x,nodes[iter2->n].y);
+            if (m>c){
+                m = c;
+                current = iter->n;
+            }
+            iter=iter->next;
+            iter2=iter2->next;
+        }
+        D = D + m;
+
+        // INSERT NEW NODE
+
+        iter = first;
+        while(iter->n!=current){
+            iter = iter->next;
+        }
+        
+        temp = (struct linked *) malloc(sizeof(struct linked));
+        if(temp==NULL){
+            printf("Error when allocating memory for the linked lists\n");
+            exit;
+        }
+
+        temp->n = r;
+        temp->next = iter->next;
+        iter->next = temp;
     }
-
-
-    D = D + d(nodes[N-1].x,nodes[N-1].y,nodes[root].x,nodes[root].y);
-    v[N]=root;
-
-    for(i=0;i<N+1;i++)
-        printf("%d\t",v[i]);
-    printf("\n");
-
-    printf("Total distance: %.lf\n", D);
 
     FILE *f;
     f = fopen("TSP_NI.txt", "w");
+    printf("NEAREST INSERTION\n----------------------------------------\n");
 
-    for(i=0;i<N+1;i++)
-        fprintf(f,"%d\n",v[i]);
-    
+    iter = first;
+    while(iter!=NULL){
+        fprintf(f,"%d\n",iter->n);
+        printf("%d\t",iter->n);
+        iter = iter->next;
+    }
+    printf("\n");
     fclose(f);
+
+    printf("Total distance: %.lf\n\n", D);
+
     return v;
 }
 
