@@ -18,6 +18,14 @@ double d(int x1,int y1,int x2,int y2){
     return sqrt(pow(x1-x2,2)+pow(y1-y2,2));
 }
 
+void print_graph(struct linked *first, FILE *f){
+    struct linked *iter;
+    iter = first;
+    while(iter!=NULL){
+        fprintf(f,"%d\n",iter->n);
+        iter = iter->next;
+    }
+}
 
 
 int * nearest_insertion(int root, int N, struct node nodes[N], int *v){
@@ -66,6 +74,12 @@ int * nearest_insertion(int root, int N, struct node nodes[N], int *v){
     temp->next = last;
     last->next = NULL;
 
+    FILE *gif = fopen("NI_gif/1.txt", "w");
+    print_graph(first, gif);
+    fclose(gif);
+
+    char name[20]; 
+    char num[5];
     for(j=2;j<N;j++){
 
         //  FIND NODE CLOSEST TO ANY ELEMENT OF SUB-TOUR
@@ -123,6 +137,14 @@ int * nearest_insertion(int root, int N, struct node nodes[N], int *v){
         temp->n = r;
         temp->next = iter->next;
         iter->next = temp;
+
+        char name[] = "NI_gif/";
+        sprintf(num, "%d", j);
+        strcat(name, num);
+        strcat(name,".txt");
+        FILE *gif = fopen(name, "w");
+        print_graph(first, gif);
+        fclose(gif);
     }
 
     FILE *f;
