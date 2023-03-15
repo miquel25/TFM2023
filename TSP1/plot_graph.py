@@ -4,9 +4,9 @@ import pandas as pd
 
 
 def plot_path(name, color):
-    v = np.loadtxt(name)
+    v = np.loadtxt('results/TSP_'+name+'.txt')
 
-    df = pd.read_csv("random_graph.txt", delimiter='\t', skiprows=[0], header=None)
+    df = pd.read_csv("results/random_graph.txt", delimiter='\t', skiprows=[0], header=None)
 
     plt.plot(df[0],df[1],'ko',ms=7)
 
@@ -17,5 +17,5 @@ def plot_path(name, color):
     plt.plot(df[0][0],df[1][0],'ro',ms=8)
     plt.show()
 
-plot_path("TSP_NN.txt",'C0')
-plot_path("TSP_NI.txt",'C1')
+plot_path("NN",'C0')
+plot_path("NI",'C1')

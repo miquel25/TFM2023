@@ -8,7 +8,7 @@ from celluloid import Camera
 def plot_gif(name):
     N = len(os.listdir(name+'_gif'))
 
-    df = pd.read_csv("random_graph.txt", delimiter='\t', skiprows=[0], header=None)
+    df = pd.read_csv("results/random_graph.txt", delimiter='\t', skiprows=[0], header=None)
 
     fig, ax = plt.subplots()
     camera = Camera(fig)
@@ -24,7 +24,7 @@ def plot_gif(name):
         camera.snap()
     plt.show()
     animation = camera.animate()
-    animation.save(name+'.gif', writer='imagemagick')
+    animation.save('results/'+name+'.gif', writer='imagemagick')
 
 plot_gif('NN')
 plot_gif('NI')

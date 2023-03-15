@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
     generate_points(x,y,N);
 
     FILE *f;
-    f = fopen("random_graph.txt","w");
+    f = fopen("results/random_graph.txt","w");
     fprintf(f,"%d\n",N);
     for(i=0;i<N;i++)
         fprintf(f,"%d\t%d\n",x[i],y[i]);

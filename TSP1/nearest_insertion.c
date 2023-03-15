@@ -148,7 +148,7 @@ int * nearest_insertion(int root, int N, struct node nodes[N], int *v){
     }
 
     FILE *f;
-    f = fopen("TSP_NI.txt", "w");
+    f = fopen("results/TSP_NI.txt", "w");
     printf("NEAREST INSERTION\n----------------------------------------\n");
 
     iter = first;
@@ -169,7 +169,7 @@ int main(){
     int N, i;
  
     FILE *f;
-    f = fopen("random_graph.txt","r");
+    f = fopen("results/random_graph.txt","r");
 
     fscanf(f,"%d",&N);
     struct node nodes[N];

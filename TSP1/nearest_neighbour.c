@@ -71,7 +71,7 @@ int * nearest_neighbour(int root, int N, struct node nodes[N], int *v){
     printf("Total distance: %.2lf\n\n", D);
 
     FILE *f;
-    f = fopen("TSP_NN.txt", "w");
+    f = fopen("results/TSP_NN.txt", "w");
 
     for(i=0;i<N+1;i++)
         fprintf(f,"%d\n",v[i]);
@@ -84,7 +84,7 @@ int main(){
     int N, i;
  
     FILE *f;
-    f = fopen("random_graph.txt","r");
+    f = fopen("results/random_graph.txt","r");
 
     fscanf(f,"%d",&N);
     struct node nodes[N];
