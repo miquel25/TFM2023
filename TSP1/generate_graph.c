@@ -17,6 +17,7 @@ void generate_points(int *x, int *y, int N){
 
 int main(int argc, char *argv[]){
     int N = 20;
+    if(argc>1) N = atoi(argv[1]);
     int *x, *y;
     int i;
     x = (int *) malloc(N*sizeof(int));

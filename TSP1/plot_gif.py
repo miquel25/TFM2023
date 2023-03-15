@@ -24,7 +24,10 @@ def plot_gif(name):
         camera.snap()
     plt.show()
     animation = camera.animate()
-    animation.save('results/'+name+'.gif', writer='imagemagick')
+    try: animation.save('results/'+name+'.gif', writer='imagemagick')
+    except: animation.save('results/'+name+'.mp4', writer='ffmpeg')
+    
+
 
 plot_gif('NN')
 plot_gif('NI')

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+#include <dirent.h>
 
 struct node {
     int x, y;
@@ -17,6 +18,28 @@ void print_graph(int *v, int N, FILE *gif){
     int i;
     for(i=0;i<N;i++)
         fprintf(gif,"%d\n",v[i]);
+}
+
+void clean_folder(){
+    DIR *d;
+    struct dirent *dir;
+    d = opendir("NN_gif/.");
+    int flag=0;
+    if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+        {
+            if (strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0){
+                char name[20] = "NN_gif/";
+                strcat(name,dir->d_name); 
+                if (remove(name) != 0) {
+                    printf("The file is not deleted.\n");
+                    exit;
+                }
+            }
+        }
+        closedir(d);
+    }
 }
 
 int * nearest_neighbour(int root, int N, struct node nodes[N], int *v){
@@ -83,6 +106,8 @@ int * nearest_neighbour(int root, int N, struct node nodes[N], int *v){
 int main(){
     int N, i;
  
+    clean_folder();
+
     FILE *f;
     f = fopen("results/random_graph.txt","r");
 
