@@ -19,3 +19,4 @@ def plot_path(name, color):
 
 plot_path("NN",'C0')
 plot_path("NI",'C1')
+plot_path("ACO", 'C2')

@@ -9,6 +9,7 @@
 
 struct node {
     int x, y;
+    int v;
 };
 
 struct linked {
@@ -52,7 +53,7 @@ void clean_folder(){
     }
 }
 
-void nearest_neighbour(int root, int N, struct node nodes[N], int *P, double p[N,N]){
+void nearest_neighbour(int root, int N, struct node nodes[N], int *P, double p[N][N]){
     int i, j;
     for(i=0;i<N;i++){
         nodes[i].v = 0;
@@ -66,8 +67,8 @@ void nearest_neighbour(int root, int N, struct node nodes[N], int *P, double p[N
         m = 0;
         for(i=0;i<N;i++){
             if (nodes[i].v==0)
-                if (m<p[current,i]){
-                    m = p[current,i];
+                if (m<p[current][i]){
+                    m = p[current][i];
                     next = i;
                 }
         }
@@ -79,56 +80,77 @@ void nearest_neighbour(int root, int N, struct node nodes[N], int *P, double p[N
 }
 
 double Fitness(int *P, int N, struct node nodes[N]){
-    double i, D=0;
+    int i, D=0;
     for(i=1;i<N+1;i++)
         D = D + d(nodes[P[i]].x,nodes[P[i]].y,nodes[P[i-1]].x,nodes[P[i-1]].y);
     return D;
 }
 
 int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
-    int i, j;
+    int i, j, root;
     double m;
-    double e=0.2, gamma=1;
-    int popsize = 5;
-    double p[N,N];
+    double e=0.4, gamma=1;
+    int popsize = 100;
+    double p[N][N];
 
     // Initialize pheromones and solution
     for(i=0;i<N;i++)
         for(j=0;j<N;j++)
-            p[i,j] = gamma;
+            p[i][j] = gamma;
 
     for(i=0;i<N+1;i++)
         best[i]=0;
     
+    double F, error=__DBL_MAX__;
     int k=0;
-    while(k<5){
+    // m=__DBL_MAX__;
+    m=5000;
+    srand(time(0));
+    while(k<1000){
         // Get population based on pheromones
-        int P[popsize, N];
-        m=__DBL_MAX__;
+        int P[popsize][N+1];
+
         for(i=0;i<popsize;i++){
-            srand(time(0));
+
             root = rand()%N;
-            nearest_neighbour(root,N,nodes,&P[i,0],p);
-            double F=Fitness(&P[i,0],N,nodes);
-            
+
+            nearest_neighbour(root,N,nodes,&P[i][0],p);
+            F=Fitness(&P[i][0],N,nodes);
+
             // Save best individual
             if (m>F){
+                printf("%.0lf -> %.0lf\n",m, F);
                 m = F;
-                for(j=0;j<N;j++)
-                    best[j]=P[i,j];
+                for(j=0;j<N+1;j++)
+                    best[j]=P[i][j];        
             }
         }
         // Evaporate pheromones
-        for(i=0;i<N;i++)
-            for(j=0;j<N;j++)
-                p[i,j]=(1-e)*p[i,j];
+        for(i=0;i<N;i++){
+            for(j=0;j<N;j++){
+                p[i][j]=(1-e)*p[i][j];
+            }
+        }
 
         // Update pheromones based on the fitness
-        for(i=0;i<popsize;i++)
-            double F=1/Fitness(&P[i,0],N,nodes);
+
+        for(i=0;i<popsize;i++){
+            F=1/Fitness(&P[i][0],N,nodes);
             for(j=1;j<N+1;j++){
-                p[P[i,j-1],P[i,j]]=p[P[i,j-1],P[i,j]]+F;
+                p[P[i][j-1]][P[i][j]]=p[P[i][j-1]][P[i][j]]+F;
             }
+        }
+
+        double temp;
+        for(i=0;i<N;i++)
+            for(j=0;j<N;j++){
+                temp=p[i][j]+p[j][i];
+                p[i][j]=temp;
+                p[j][i]=temp;
+            }
+
+    
+    // printf("%2lf, %2lf\n",Fitness(best,N,nodes), m);
     k++;
     }
 
@@ -146,7 +168,6 @@ int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
         fprintf(f,"%d\n",best[i]);
     
     fclose(f);
-    return v;
 
 }
 
