@@ -17,6 +17,6 @@ def plot_path(name, color):
     plt.plot(df[0][0],df[1][0],'ro',ms=8)
     plt.show()
 
-plot_path("NN",'C0')
-plot_path("NI",'C1')
+# plot_path("NN",'C0')
+# plot_path("NI",'C1')
 plot_path("ACO", 'C2')
