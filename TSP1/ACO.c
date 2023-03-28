@@ -47,26 +47,44 @@ void clean_folder(){
 
 void antpath(int root, int N, struct node nodes[N], int *P, double p[N*(N-1)/2]){
     int i, j;
+    int i2, j2;
     for(i=0;i<N;i++){
         nodes[i].v = 0;
     }
     nodes[root].v = 1;
     P[0]=root;
     int current = root, next;
-    float epsilon;
-    int nvisited =1;
+    double sum;
+    int nvisited = 1;
+    float delta=0.3, epsilon=0.7;
+    double desirability;
     while(nvisited<N){
-        epsilon=0;
-        for(i=0;i<N;i++){
-            if (nodes[i].v==0)
-                epsilon+=acc(p,current,i);
-        }
-        next=rand()%(int)epsilon;
-        epsilon=0;
+        sum=1;
         for(i=0;i<N;i++){
             if (nodes[i].v==0){
-                epsilon+=acc(p,current,i);
-                if(next<epsilon){
+                i2=current;
+                j2=i;
+                if(i2>j2){
+                    j2=i2;
+                    i2=i;
+                }
+                desirability=pow(acc(p,i2,j2),delta)*pow(d(nodes[current].x,nodes[current].y,nodes[i].x,nodes[i].y),epsilon);
+                sum+=desirability;
+            }
+        }
+        next=rand()%(int)sum;
+        sum=1;
+        for(i=0;i<N;i++){
+            if (nodes[i].v==0){
+                i2=current;
+                j2=i;
+                if(i2>j2){
+                    j2=i2;
+                    i2=i;
+                }
+                desirability=pow(acc(p,i2,j2),delta)*pow(d(nodes[current].x,nodes[current].y,nodes[i].x,nodes[i].y),epsilon);
+                sum+=desirability;
+                if(next<sum){
                     next=i;
                     break;
                 }
@@ -89,6 +107,7 @@ double Fitness(int *P, int N, struct node nodes[N]){
 
 int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
     int i, j, root;
+    int i2, j2;
     double m;
     double e=0.4, gamma=1;
     int popsize = 100;
@@ -96,9 +115,8 @@ int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
     double p[n];
 
     // Initialize pheromones and solution
-    for(i=0;i<N;i++)
-        for(j=0;j<N;j++)
-            acc(p,i,j) = gamma;
+    for(i=0;i<n;i++)
+            p[i] = gamma;
 
     for(i=0;i<N+1;i++)
         best[i]=0;
@@ -124,25 +142,25 @@ int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
                 m = F;
                 for(j=0;j<N+1;j++)
                     best[j]=P[i][j];  
-                for(i=0;i<N+1;i++)
-                    printf("%d\t",best[i]);
-                printf("\n");      
             }
         }
         // Evaporate pheromones
-        // for(i=0;i<N;i++){
-        //     for(j=0;j<N;j++){
-        //         acc(p,i,j)=(1-e)*acc(p,i,j);
-        //     }
-        // }
+        for(i=0;i<n;i++){
+                p[i]=(1-e)*p[i];
+        }
 
         // Update pheromones based on the fitness
 
         for(i=0;i<popsize;i++){
             F=1/Fitness(&P[i][0],N,nodes);
             for(j=1;j<N+1;j++){
-                acc(p,1,3)=acc(p,1,3);
-                // acc(p,P[i][j-1],P[i][j])=acc(p,P[i][j-1],P[i][j]);
+                i2=P[i][j-1];
+                j2=P[i][j];
+                if(i2>j2){
+                    j2=i2;
+                    i2=P[i][j];
+                }
+                acc(p,i2,j2)=acc(p,i2,j2)+F;
             }
         }
     
