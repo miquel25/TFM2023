@@ -5,7 +5,7 @@
 #include <math.h>
 #include <dirent.h>
 
-// Essentials of Metaheuristics - Algorithm 110
+// Essentials of Metaheuristics - Algorithm 20
 
 struct node {
     int x, y;
@@ -34,14 +34,14 @@ void print_graph(int N, double p[N*(N-1)/2], FILE *gif){
 void clean_folder(){
     DIR *d;
     struct dirent *dir;
-    d = opendir("ACO_gif/.");
+    d = opendir("GA_gif/.");
     int flag=0;
     if (d)
     {
         while ((dir = readdir(d)) != NULL)
         {
             if (strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0){
-                char name[20] = "ACO_gif/";
+                char name[20] = "GA_gif/";
                 strcat(name,dir->d_name); 
                 if (remove(name) != 0) {
                     printf("The file is not deleted.\n");
@@ -60,7 +60,7 @@ float RandomFloat(float a, float b) {
     return a + r;
 }
 
-void antpath(int root, int N, struct node nodes[N], int *P, double p[N*(N-1)/2],float delta,float epsilon){
+void crossover(int root, int N, struct node nodes[N], int *P, double p[N*(N-1)/2],float delta,float epsilon){
     int i, j;
     int i2, j2;
     for(i=0;i<N;i++){
@@ -119,43 +119,80 @@ double Fitness(int *P, int N, struct node nodes[N]){
     return D;
 }
 
-int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
-    int i, j, root;
-    int i2, j2;
-    double m;
-    double e=0.5;
-    float Q=1;
-    int popsize = 50;
-    int n=N*(N-1)/2;
-    double p[n], gamma=popsize/445.;
-    float delta=1, epsilon=1-epsilon;
+int SelectWithReplacement(int N, int (*)P[N+1], int popsize, struct node nodes[N]){
+    int i;
+    int next;
+    float sum=0;
+    for(i=0;i<popsize;i++){
+            sum=sum+Fitness(P[i], N, nodes);
+    }
+    next = RandomFloat(0, sum);
+    sum=0;
+    for(i=0;i<popsize;i++){
+        sum=sum+Fitness(P[i], N, nodes);
+            if(sum>=next){
+                next=i;
+                break;
+            }
+        }
+    printf("%d\n",next);
+    return next;
+}
 
+int * GA(int root, int N, struct node nodes[N], int *best){ //best[N+1]
+    int i, j;
+    int i2, j2;
+    int popsize = 20;
+    double m;
     char name[20]; 
     char num[5];
-
-    // Initialize pheromones and solution
-    for(i=0;i<n;i++)
-            p[i] = gamma;
 
     for(i=0;i<N+1;i++)
         best[i]=0;
     
     double F, error=__DBL_MAX__;
     int k=0;
-    m=__DBL_MAX__;
-    // m=5000;
+    // m=__DBL_MAX__;
+    m=5000;
     srand(time(0));
     int P[popsize][N+1];
-    while(k<1000){
-        // printf("k = %d\n",k);
-        // Get population based on pheromones
-        for(i=0;i<popsize;i++){
-            // root = rand()%N;
-            root = 0;
-            antpath(root,N,nodes,&P[i][0],p,delta,epsilon);
-            F=Fitness(&P[i][0],N,nodes);
+    
+    // Initialize population
+    int sum, next;
+    for(i=0;i<popsize;i++){
+        P[i][0]=root;
+        P[i][N]=root;
+        for(j=0;j<N;j++){
+            nodes[j].v = 0;
+        }
+        nodes[root].v = 1;
+        for(i2=1;i2<N;i2++){
+            sum=0;
+            for(j=0;j<N;j++){
+                if(nodes[j].v==0)
+                    sum++;
+            }
+            sum++;
+            next = rand()%sum;
+            sum=0;
+            for(j=0;j<N;j++){
+                if(nodes[j].v==0){
+                    sum++;
+                    if(sum>=next){
+                        next=j;
+                        break;
+                    }
+                }
+            }
+            P[i][i2]=next;
+            nodes[next].v=1;
+        }
+    }
 
-            // Save best individual
+    while(k<2){
+        // Save best individual
+        for(i=0;i<popsize;i++){
+            F=Fitness(P[i],N,nodes);
             if (m>F){
                 printf("%.0lf -> %.0lf\n",m, F);
                 m = F;
@@ -163,38 +200,20 @@ int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
                     best[j]=P[i][j];  
             }
         }
-        // Evaporate pheromones
-        for(i=0;i<n;i++){
-                p[i]=(1-e)*p[i];
-        }
+        int Q[popsize][N+1];
+        SelectWithReplacement(N, P, popsize, nodes);
 
-        // Update pheromones based on the fitness
-
-        for(i=0;i<popsize;i++){
-            F=Q/Fitness(&P[i][0],N,nodes);
-            for(j=1;j<N+1;j++){
-                i2=P[i][j-1];
-                j2=P[i][j];
-                if(i2>j2){
-                    j2=i2;
-                    i2=P[i][j];
-                }
-                acc(p,i2,j2)=acc(p,i2,j2)+F;
-            }
-        }
-        // printf("%lf\n",F);
-    // printf("%2lf, %2lf\n",Fitness(best,N,nodes), m);
-    char name[] = "ACO_gif/";
-    sprintf(num, "%d", k);
-    strcat(name, num);
-    strcat(name,".txt");
-    FILE *gif = fopen(name, "w");
-    print_graph(N, p, gif);
-    fclose(gif);
+    // char name[] = "GA_gif/";
+    // sprintf(num, "%d", k);
+    // strcat(name, num);
+    // strcat(name,".txt");
+    // FILE *gif = fopen(name, "w");
+    // print_graph(N, p, gif);
+    // fclose(gif);
     k++;
     }
 
-    printf("ANT COLONY OPTIMIZATION\n----------------------------------------\n");
+    printf("GENETIC ALGORITHM\n----------------------------------------\n");
     for(i=0;i<N+1;i++)
         printf("%d\t",best[i]);
     printf("\n");
@@ -202,7 +221,7 @@ int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
     printf("Total distance: %.2lf\n\n", Fitness(best,N,nodes));
 
     FILE *f;
-    f = fopen("results/TSP_ACO.txt", "w");
+    f = fopen("results/TSP_GA.txt", "w");
 
     for(i=0;i<N+1;i++)
         fprintf(f,"%d\n",best[i]);
@@ -240,7 +259,7 @@ int main(){
         exit;
     }
 
-    ACO(N,nodes, v);
+    GA(0,N,nodes, v);
 
     return 0;
 }
