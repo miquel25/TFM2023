@@ -141,7 +141,6 @@ int * nearest_insertion(int root, int N, struct node nodes[N]){
             iter=iter->next;
             iter2=iter2->next;
         }
-        D = D + m;
 
         // INSERT NEW NODE
 
@@ -168,6 +167,7 @@ int * nearest_insertion(int root, int N, struct node nodes[N]){
         print_graph(first, gif);
         fclose(gif);
     }
+    D = 0;
 
     FILE *f;
     f = fopen("results/TSP_NI.txt", "w");
@@ -175,6 +175,8 @@ int * nearest_insertion(int root, int N, struct node nodes[N]){
 
     iter = first;
     while(iter!=NULL){
+        if(iter!=first) D = D + d(nodes[iter->n].x,nodes[iter->n].y,nodes[r].x,nodes[r].y);
+        r = iter->n;
         fprintf(f,"%d\n",iter->n);
         printf("%d\t",iter->n);
         iter = iter->next;
@@ -182,7 +184,7 @@ int * nearest_insertion(int root, int N, struct node nodes[N]){
     printf("\n");
     fclose(f);
 
-    printf("Total distance: %.lf\n\n", D);
+    printf("Total distance: %.2lf\n\n", D);
 }
 
 int main(){

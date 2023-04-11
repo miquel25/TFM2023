@@ -74,4 +74,9 @@ def ACO(nodes):
 nodes = pd.read_csv("results/random_graph.txt", delimiter='\t', skiprows=[0], header=None)
 nodes = nodes.rename(columns={0:'x',1:'y'})
 
-ACO(nodes)
+P = [0,3,1,2,0]
+D=0
+for i in range(1,len(P)):
+    D+=d(nodes['x'][P[i-1]],nodes['y'][P[i-1]],nodes['x'][P[i]],nodes['y'][P[i]])
+print(D)
+# ACO(nodes)

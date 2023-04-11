@@ -119,23 +119,22 @@ double Fitness(int *P, int N, struct node nodes[N]){
     return D;
 }
 
-int SelectWithReplacement(int N, int (*)P[N+1], int popsize, struct node nodes[N]){
+int SelectWithReplacement(int N, int popsize, int P[popsize][N+1], struct node nodes[N]){
     int i;
     int next;
     float sum=0;
     for(i=0;i<popsize;i++){
-            sum=sum+Fitness(P[i], N, nodes);
+            sum=sum+Fitness(&P[i][0], N, nodes);
     }
     next = RandomFloat(0, sum);
     sum=0;
     for(i=0;i<popsize;i++){
-        sum=sum+Fitness(P[i], N, nodes);
+        sum=sum+Fitness(&P[i][0], N, nodes);
             if(sum>=next){
                 next=i;
                 break;
             }
         }
-    printf("%d\n",next);
     return next;
 }
 
@@ -200,8 +199,22 @@ int * GA(int root, int N, struct node nodes[N], int *best){ //best[N+1]
                     best[j]=P[i][j];  
             }
         }
+        // Select Parents
         int Q[popsize][N+1];
-        SelectWithReplacement(N, P, popsize, nodes);
+        int Pa[N];
+        int Pb[N];
+        int a, b;
+        for(i=0;i<popsize/2;i++){
+            a = SelectWithReplacement(N, popsize, P, nodes);
+            b = SelectWithReplacement(N, popsize, P, nodes);
+            for(j=1;j<N;j++){
+                Pa[j]=P[a][j];
+                Pb[j]=P[b][j];
+            }    
+            // Crossover
+            
+        }
+        
 
     // char name[] = "GA_gif/";
     // sprintf(num, "%d", k);

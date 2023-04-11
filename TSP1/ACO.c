@@ -82,7 +82,7 @@ void antpath(int root, int N, struct node nodes[N], int *P, double p[N*(N-1)/2],
                     j2=i2;
                     i2=i;
                 }
-                desirability=pow(acc(p,i2,j2),delta)*pow(d(nodes[current].x,nodes[current].y,nodes[i].x,nodes[i].y),epsilon);
+                desirability=acc(p,i2,j2);//pow(acc(p,i2,j2),delta)*pow(d(nodes[current].x,nodes[current].y,nodes[i].x,nodes[i].y),epsilon);
                 sum+=desirability;
             }
         }
@@ -96,7 +96,7 @@ void antpath(int root, int N, struct node nodes[N], int *P, double p[N*(N-1)/2],
                     j2=i2;
                     i2=i;
                 }
-                desirability=pow(acc(p,i2,j2),delta)*pow(d(nodes[current].x,nodes[current].y,nodes[i].x,nodes[i].y),epsilon);
+                desirability=acc(p,i2,j2);//pow(acc(p,i2,j2),delta)*pow(d(nodes[current].x,nodes[current].y,nodes[i].x,nodes[i].y),epsilon);
                 sum+=desirability;
                 if(next<sum){
                     next=i;
@@ -113,7 +113,8 @@ void antpath(int root, int N, struct node nodes[N], int *P, double p[N*(N-1)/2],
 }
 
 double Fitness(int *P, int N, struct node nodes[N]){
-    int i, D=0;
+    int i;
+    double D=0;
     for(i=1;i<N+1;i++)
         D = D + d(nodes[P[i]].x,nodes[P[i]].y,nodes[P[i-1]].x,nodes[P[i-1]].y);
     return D;
@@ -123,12 +124,13 @@ int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
     int i, j, root;
     int i2, j2;
     double m;
-    double e=0.5;
+    int itermax = 100;
+    double e=0.05;
     float Q=1;
     int popsize = 50;
     int n=N*(N-1)/2;
-    double p[n], gamma=popsize/445.;
-    float delta=1, epsilon=1-epsilon;
+    double p[n], gamma=0.0453;
+    float delta=1, epsilon=1;
 
     char name[20]; 
     char num[5];
@@ -146,7 +148,7 @@ int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
     // m=5000;
     srand(time(0));
     int P[popsize][N+1];
-    while(k<1000){
+    while(k<itermax){
         // printf("k = %d\n",k);
         // Get population based on pheromones
         for(i=0;i<popsize;i++){
