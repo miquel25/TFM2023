@@ -239,7 +239,7 @@ int * GA(int root, int N, struct node nodes[N], int *best){ //best[N+1]
         for(i=0;i<popsize;i++){
             F=Fitness(&P[i*(N+1)],N,nodes);
             if (m>F){
-                printf("%.0lf -> %.0lf\n",m, F);
+                // printf("%.0lf -> %.0lf\n",m, F);
                 m = F;
                 for(j=0;j<N+1;j++)
                     best[j]=P[i*(N+1)+j];  

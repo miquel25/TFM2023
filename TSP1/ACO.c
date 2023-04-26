@@ -159,7 +159,7 @@ int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
 
             // Save best individual
             if (m>F){
-                printf("%.0lf -> %.0lf\n",m, F);
+                // printf("%.0lf -> %.0lf\n",m, F);
                 m = F;
                 for(j=0;j<N+1;j++)
                     best[j]=P[i][j];  
