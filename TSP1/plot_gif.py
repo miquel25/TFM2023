@@ -21,6 +21,7 @@ def plot_gif(name):
             ax.plot([df[0][j],df[0][i]],[df[1][j],df[1][i]],'C0-',linewidth=2)
             j = i
         ax.plot(df[0][0],df[1][0],'ro',ms=8)
+        ax.text(0,0,f"Iteration: {n}")
         camera.snap()
     plt.show()
     animation = camera.animate()
@@ -29,5 +30,6 @@ def plot_gif(name):
     
 
 
-plot_gif('NN')
-plot_gif('NI')
+# plot_gif('NN')
+# plot_gif('NI')
+plot_gif('GA')
