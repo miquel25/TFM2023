@@ -66,10 +66,8 @@ float RandomInt(int a, int b) {
 void Crossover(int N, struct node nodes[N], int *P, int *Q, int a, int b, int index){
     int i, j;
     int p1, p2;
-    p1 = 4;
-    p2 = 7;
-    // p1 = RandomInt(0,N);
-    // p2 = RandomInt(0,N);
+    p1 = RandomInt(1,N-1);
+    p2 = RandomInt(p1,N);
     struct linked *first1 = malloc(sizeof(struct linked));
     struct linked *last1;
     struct linked *first2 = malloc(sizeof(struct linked));
@@ -85,8 +83,6 @@ void Crossover(int N, struct node nodes[N], int *P, int *Q, int a, int b, int in
         Q[2*index*(N+1)+i]=P[a*(N+1)+i];
         Q[(2*index+1)*(N+1)+i]=P[b*(N+1)+i];
     }
-
-
 
     int flag1=0, flag2=0;
     for(i=1;i<N;i++){
@@ -139,7 +135,8 @@ void Crossover(int N, struct node nodes[N], int *P, int *Q, int a, int b, int in
 }
 
 double Fitness(int *P, int N, struct node nodes[N]){
-    int i, D=0;
+    int i;
+    double D=0;
     for(i=1;i<N+1;i++)
         D = D + d(nodes[P[i]].x,nodes[P[i]].y,nodes[P[i-1]].x,nodes[P[i-1]].y);
     return D;

@@ -30,6 +30,7 @@ void clean_folder(){
         while ((dir = readdir(d)) != NULL)
         {
             if (strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0){
+                printf("%s\n",dir->d_name);
                 char name[20] = "NN_gif/";
                 strcat(name,dir->d_name); 
                 if (remove(name) != 0) {
