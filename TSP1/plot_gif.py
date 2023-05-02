@@ -33,3 +33,4 @@ def plot_gif(name):
 plot_gif('NN')
 plot_gif('NI')
 plot_gif('GA')
+plot_gif('SA')

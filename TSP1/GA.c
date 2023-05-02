@@ -192,8 +192,7 @@ int * GA(int root, int N, struct node nodes[N], int *best){ //best[N+1]
     
     double F, error=__DBL_MAX__;
     int k=0;
-    // m=__DBL_MAX__;
-    m=5000;
+    m=__DBL_MAX__;
     srand(time(0));
     int *P = malloc(popsize*(N+1)*sizeof(int));
     int *Q = malloc(popsize*(N+1)*sizeof(int));
