@@ -175,14 +175,13 @@ void Mutation(int N, struct node nodes[N], int* Q, float MR, int index){
     }
 }
 
-int * GA(int root, int N, struct node nodes[N], int *best){ //best[N+1]
+int * GA(int root, int N, struct node nodes[N], int *best, int itermax){ //best[N+1]
     int i, j;
     int i2, j2;
     int popsize = 20;
     double m;
     char name[20]; 
     char num[5];
-    int itermax = 10000;
 
     int t = 5; // Tournament size
     float MR = 0.3; // Mutation rate
@@ -286,7 +285,9 @@ int * GA(int root, int N, struct node nodes[N], int *best){ //best[N+1]
 
 }
 
-int main(){
+int main(int argc, char *argv[]){
+    int itermax = 10000;
+    if(argc>1) itermax = atoi(argv[1]);
     int N, i;
  
     clean_folder();
@@ -315,7 +316,7 @@ int main(){
         exit;
     }
 
-    GA(0,N,nodes, v);
+    GA(0,N,nodes, v, itermax);
 
     return 0;
 }

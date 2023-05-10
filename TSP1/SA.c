@@ -117,17 +117,16 @@ void Tweak(int *S, int *R, int root, int N){
 
 double CoolDown(double T, int k, int itermax, double Tmax){
     // T = -Tmax/itermax*k+Tmax;
-    T = Tmax*exp(-10.*k/itermax);
+    T = Tmax*exp(-5.*k/itermax);
     return T;
 }
 
-int * SA(int root, int N, struct node nodes[N], int *best){
+int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
     int i, j;
     int i2, j2;
     int k=0;
     char name[20]; 
     char num[5];
-    int itermax = 1000;
     double m=__DBL_MAX__;
     m=5000;
 
@@ -218,7 +217,9 @@ int * SA(int root, int N, struct node nodes[N], int *best){
 
 }
 
-int main(){
+int main(int argc, char *argv[]){
+    int itermax = 1000;
+    if(argc>1) itermax = atoi(argv[1]);
     int N, i;
  
     clean_folder();
@@ -247,7 +248,7 @@ int main(){
         exit;
     }
 
-    SA(0,N,nodes, v);
+    SA(0,N,nodes, v, itermax);
 
     return 0;
 }

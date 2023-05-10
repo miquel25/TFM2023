@@ -120,11 +120,10 @@ double Fitness(int *P, int N, struct node nodes[N]){
     return D;
 }
 
-int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
+int * ACO(int N, struct node nodes[N], int *best, int itermax){ //best[N+1]
     int i, j, root;
     int i2, j2;
     double m;
-    int itermax = 100;
     double e=0.05;
     float Q=1;
     int popsize = 50;
@@ -213,7 +212,9 @@ int * ACO(int N, struct node nodes[N], int *best){ //best[N+1]
 
 }
 
-int main(){
+int main(int argc, char *argv[]){
+    int itermax = 100;
+    if(argc>1) itermax = atoi(argv[1]);
     int N, i;
  
     clean_folder();
@@ -242,7 +243,7 @@ int main(){
         exit;
     }
 
-    ACO(N,nodes, v);
+    ACO(N,nodes, v, itermax);
 
     return 0;
 }
