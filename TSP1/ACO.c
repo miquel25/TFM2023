@@ -120,17 +120,17 @@ double Fitness(int *P, int N, struct node nodes[N]){
     return D;
 }
 
-int * ACO(int N, struct node nodes[N], int *best, int itermax){ //best[N+1]
+int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, double gamma){ //best[N+1]
     int i, j, root;
     int i2, j2;
     double m;
     double e=0.05;
     float Q=1;
-    int popsize = 50;
+    // int popsize = 50;
     int n=N*(N-1)/2;
-    double p[n], gamma=0.0453;
+    double p[n];
+    // double gamma=0.0453;
     float delta=1, epsilon=1;
-
     char name[20]; 
     char num[5];
 
@@ -196,6 +196,7 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax){ //best[N+1]
     }
 
     printf("ANT COLONY OPTIMIZATION\n----------------------------------------\n");
+    printf("popsize = %d, gamma = %lf\n\n", popsize, gamma);
     for(i=0;i<N+1;i++)
         printf("%d\t",best[i]);
     printf("\n");
@@ -213,8 +214,14 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax){ //best[N+1]
 }
 
 int main(int argc, char *argv[]){
-    int itermax = 100;
+    int itermax = 10000;
+    int popsize = 140;
+    double gamma = 1.9;
+    int params = 0;
     if(argc>1) itermax = atoi(argv[1]);
+    if(argc>2) popsize = atoi(argv[2]);
+    if(argc>3) gamma = atof(argv[3]);
+    if(argc>4) params = atoi(argv[4]);
     int N, i;
  
     clean_folder();
@@ -243,7 +250,13 @@ int main(int argc, char *argv[]){
         exit;
     }
 
-    ACO(N,nodes, v, itermax);
+    ACO(N,nodes, v, itermax, popsize, gamma);
+
+    if(params==1){
+        FILE* param_results = fopen("ACO_param_results/ACO_params.txt", "a");
+        fprintf(param_results, "%d %lf %lf\n", popsize, gamma, Fitness(v,N,nodes));
+        fclose(param_results);
+    }
 
     return 0;
 }

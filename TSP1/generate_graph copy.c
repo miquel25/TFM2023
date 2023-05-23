@@ -4,24 +4,12 @@
 #include <time.h>
 #include <math.h>
 
-
-float RandomFloat(float a, float b) {
-    float random = ((float) rand()) / (float) RAND_MAX;
-    float diff = b - a;
-    float r = random * diff;
-    return a + r;
-}
-
-void generate_points(int *x, int *y, double d, int N){
+void generate_points(int *x, int *y, int N){
     srand(time(0));
     int i;
-    x[0]=0;
-    y[0]=0;
-    float phi;
-    for(i=1;i<N;i++){
-        phi = RandomFloat(0,2*M_PI);
-        x[i]=i*d*sin(phi);
-        y[i]=i*d*cos(phi);
+    for(i=0;i<N;i++){
+        x[i]=rand()%100;
+        y[i]=rand()%100;
         // printf("(%d,%d)\n",x[i],y[i]);
     }
 }
@@ -29,9 +17,7 @@ void generate_points(int *x, int *y, double d, int N){
 
 int main(int argc, char *argv[]){
     int N = 10;
-    double d = 10;
     if(argc>1) N = atoi(argv[1]);
-    if(argc>2) d = atof(argv[2]);
     int *x, *y;
     int i;
     x = (int *) malloc(N*sizeof(int));
@@ -42,7 +28,7 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    generate_points(x,y,d,N);
+    generate_points(x,y,N);
 
     FILE *f;
     f = fopen("results/random_graph.txt","w");

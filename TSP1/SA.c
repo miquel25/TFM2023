@@ -115,16 +115,26 @@ void Tweak(int *S, int *R, int root, int N){
 }
 
 
-double CoolDown(double T, int k, int itermax, double Tmax){
-    // T = -Tmax/itermax*k+Tmax;
-    T = Tmax*exp(-5.*k/itermax);
+double CoolDown(double T, int k, int itermax, double Tmax, int phase){
+    if (phase==0)
+        T = 1.01*T;
+    if (phase==1){
+        T = T - Tmax/2;
+        T = 0.99*T+Tmax/2;
+    }
+    if (phase==2){
+        T = T - Tmax/10;
+        T = 0.99*T+Tmax/10;
+    }
+    if (phase==3)
+        T = 0.99*T;
     return T;
 }
 
 int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
     int i, j;
     int i2, j2;
-    int k=0;
+    int k=0, k2=0;
     char name[20]; 
     char num[5];
     double m=__DBL_MAX__;
@@ -138,8 +148,14 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
     int *S, *R, *aux;
     double dE;
     double random;
-    double Tmax=1000;
+    double Tmax=1;
     double T=Tmax;
+    int phase = 0;
+    float accepted = 0;
+    float total = 0;
+    float accrate = 1;
+    float R1 = 0.8;
+    float R2 = 0.1;
 
     S = (int *) malloc((N+1)*sizeof(int));
     if(S==NULL){
@@ -149,10 +165,11 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
     
     RandomPath(S,root, N, nodes);
     best = S;
-
+ 
     int iter=1;
     while(k<itermax){
         R = (int *) malloc((N+1)*sizeof(int));
+        total++;
         if(S==NULL){
             printf("Error when allocating memmory\n");
             exit;
@@ -161,6 +178,7 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
         Tweak(S,R,root,N);
         dE = Fitness(S,N,nodes)-Fitness(R,N,nodes);
         if(dE > 0){
+            accepted++;
             aux = S;
             S = R;
             R = aux;
@@ -169,6 +187,7 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
         if(dE < 0){
             random = RandomFloat(0,1);
             if (random < exp(dE/T)){
+                accepted++;
                 aux = S;
                 S = R;
                 R = aux;
@@ -182,21 +201,56 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
                 best[i] = S[i];
         }
 
-        T = CoolDown(T,k,itermax,Tmax);
+        T = CoolDown(T,k,itermax,Tmax,phase);
 
-        if(k%(itermax/100+1)==0){
-            char name[] = "SA_gif/";
-            sprintf(num, "%d", iter);
-            strcat(name, num);
-            strcat(name,".txt");
-            FILE *gif = fopen(name, "w");
-            print_graph(N, best, gif);
-            fclose(gif);
-            iter++;
-        }
+        // if(k%(itermax/100+1)==0){
+        //     char name[] = "SA_gif/";
+        //     sprintf(num, "%d", iter);
+        //     strcat(name, num);
+        //     strcat(name,".txt");
+        //     FILE *gif = fopen(name, "w");
+        //     print_graph(N, best, gif);
+        //     fclose(gif);
+        //     iter++;
+        // }
+        k2++;
         k++;
+
+        accrate = accepted/total;
+        
+        if(k2>500){
+            accepted = 0;
+            total = 0;
+            k2=0;
+        }
+
+
+        if(accrate>R1 && phase == 0 && k2>200){
+            total = 0;
+            accepted = 0;
+            phase=1;
+            Tmax = T;
+            k = 0;
+            k2 = 0;
+            printf("Phase 1\n");
+        }
+
+        if (phase==1 && k > itermax/2){
+            phase=2;
+            k = 0;
+            printf("Phase 2\n");
+        }
+
+        if (phase==2 && k > itermax/2){
+            phase=3;
+            k = 0;
+            printf("Phase 3\n");
+        }
+
         fprintf(lvst,"%lf\n",Fitness(S,N,nodes));
-        fprintf(mvst,"%lf\n",m);
+        // fprintf(mvst,"%lf\n",m);
+        fprintf(mvst,"%lf\n",T);
+        // fprintf(mvst,"%lf\n",accrate);
     }
     fclose(lvst);
 
@@ -206,6 +260,7 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
     printf("\n");
 
     printf("Total distance: %.2lf\n\n", Fitness(best,N,nodes));
+    printf("%d %d \n", k, k2);
 
     FILE *f;
     f = fopen("results/TSP_SA.txt", "w");
@@ -218,7 +273,7 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
 }
 
 int main(int argc, char *argv[]){
-    int itermax = 1000;
+    int itermax = 5000;
     if(argc>1) itermax = atoi(argv[1]);
     int N, i;
  

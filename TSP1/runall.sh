@@ -1,4 +1,4 @@
-gcc generate_graph.c -o generate_graph
+gcc generate_graph.c -o generate_graph -lm
 gcc nearest_neighbour.c -o nearest_neighbour -lm
 gcc nearest_insertion.c -o nearest_insertion -lm
 gcc ACO.c -o ACO -lm
