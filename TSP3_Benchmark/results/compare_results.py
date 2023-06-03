@@ -1,10 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
-plt.style.use('seaborn-whitegrid')
+# plt.style.use('seaborn-whitegrid')
 import pandas as pd
+
+nn = np.loadtxt("BMK_NN.txt")
+ni = np.loadtxt("BMK_NI.txt")
 
 sa = pd.read_csv("BMK_SA.txt", sep=' ', header=None)
 ga = pd.read_csv("BMK_GA.txt", sep=' ', header=None)
+aco = pd.read_csv("BMK_GA.txt", sep=' ', header=None)
+
 
 realSolution = np.loadtxt("best_benchmark.txt")
 graph = pd.read_csv("random_graph.txt",skiprows=1, header=None, sep='\t')
@@ -14,32 +19,30 @@ for i in range(1,len(realSolution)):
     Freal+=np.sqrt((graph[0][realSolution[i]]-graph[0][realSolution[i-1]])**2+(graph[1][realSolution[i]]-graph[1][realSolution[i-1]])**2)
 
 
-
-
-def hist(sa,ga):
-    fig, (ax0, ax1) = plt.subplots(1,2)
-    # fig, ax1 = plt.subplots()
+def hist(sa,ga,aco):
     ga_heights, ga_bins = np.histogram(ga[0])
     sa_heights, sa_bins = np.histogram(sa[0], bins=ga_bins)
+    aco_heights, aco_bins = np.histogram(aco[0], bins=ga_bins)
+    width = (ga_bins[1] - ga_bins[0])/4
 
-    width = (ga_bins[1] - ga_bins[0])/3
-
-    ax0.bar(sa_bins[:-1], sa_heights, width=width)
-    ax0.bar(ga_bins[:-1]+width, ga_heights, width=width)
-    ax0.axvline(Freal,color='r',linestyle='--')
-
-    ax1.hist(sa[1],bins=2)
-    ax1.hist(ga[1],bins=30)
-    plt.show()
-
-def mean_plot(sa,ga):
-    labels = ['Simulated Anneling','Genetic Algorithm']
-    mean = [np.mean(sa[0]), np.mean(ga[0])]
-    umean = [np.var(sa[0]), np.var(ga[0])]
+    plt.bar(aco_bins[:-1]-width, aco_heights, width=width, label='Ant Colony Optimization')
+    plt.bar(ga_bins[:-1], ga_heights, width=width, label='Genetic Algorithm')
+    plt.bar(sa_bins[:-1]+width, sa_heights, width=width, label='Simulated Annealing')
     
-    plt.errorbar(labels,mean,yerr=umean,fmt='.', capsize=5)
-    plt.axhline(Freal,linestyle='--',color='r')
+    plt.axvline(Freal,color='r',linestyle='--',label='Analytic solution')
+    plt.legend()
     plt.show()
 
-hist(sa,ga)
-mean_plot(sa,ga)
+
+def mean_plot(sa,ga,aco):
+    labels = ['Ant Colony Optimization','Genetic Algorithm','Simulated Anneling']
+    mean = [np.mean(aco[0]), np.mean(ga[0]),np.mean(sa[0])]
+    umean = [np.var(aco[0]), np.var(ga[0]),np.var(sa[0])]
+    
+    plt.plot(['Nearest Neighbour','Nearest Insertion'],[nn,ni],'o',ms=3)
+    plt.errorbar(labels,mean,yerr=umean,fmt='.', capsize=5, color='C0')
+    plt.xticks(rotation=-30, ha='left')
+    plt.axhline(Freal,linestyle='--',color='r')
+
+# hist(sa,ga,aco)
+mean_plot(sa,ga,aco)
