@@ -39,7 +39,7 @@ def mean_plot(sa,ga,aco):
     mean = [np.mean(aco[0]), np.mean(ga[0]),np.mean(sa[0])]
     umean = [np.var(aco[0]), np.var(ga[0]),np.var(sa[0])]
     
-    plt.plot(['Nearest Neighbour','Nearest Insertion'],[nn,ni],'o',ms=3)
+    plt.plot(['Nearest Neighbour','Nearest Insertion'],[nn[0],ni[0]],'o',ms=3)
     plt.errorbar(labels,mean,yerr=umean,fmt='.', capsize=5, color='C0')
     plt.xticks(rotation=-30, ha='left')
     plt.axhline(Freal,linestyle='--',color='r')
