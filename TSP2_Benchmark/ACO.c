@@ -120,7 +120,7 @@ double Fitness(int *P, int N, struct node nodes[N]){
     return D;
 }
 
-int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, double gamma){ //best[N+1]
+int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, double gamma, int params, char *argv[]){ //best[N+1]
     time_t tinit = clock();
     int i, j, root;
     int i2, j2;
@@ -145,7 +145,6 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, doub
     double F, error=__DBL_MAX__;
     int k=0;
     m=__DBL_MAX__;
-    // m=5000;
     srand(time(0));
     int P[popsize][N+1];
     while(k<itermax){
@@ -162,8 +161,8 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, doub
                 // printf("%.0lf -> %.0lf\n",m, F);
                 m = F;
                 for(j=0;j<N+1;j++)
-                    best[j]=P[i][j]; 
-                k = 0; 
+                    best[j]=P[i][j];  
+                k=0;
             }
         }
         // Evaporate pheromones
@@ -185,7 +184,6 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, doub
                 acc(p,i2,j2)=acc(p,i2,j2)+F;
             }
         }
-        
     k++;
     }
 
@@ -197,10 +195,18 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, doub
 
     printf("Total distance: %.2lf\n\n", Fitness(best,N,nodes));
 
+    if(params==0){
     FILE *f;
-    f = fopen("results/BMK_ACO.txt", "a");
+    f = fopen(argv[2], "a");
     fprintf(f,"%2lf %2lf\n",Fitness(best,N,nodes),(double)(clock()-tinit)/CLOCKS_PER_SEC);
     fclose(f);
+    }
+
+    if(params==1){
+    FILE* param_results = fopen("parameters/ACO.txt", "a");
+    fprintf(param_results, "%d %lf %lf\n", popsize, gamma, Fitness(best,N,nodes));
+    fclose(param_results);
+    }
 
 }
 
@@ -209,15 +215,18 @@ int main(int argc, char *argv[]){
     int popsize = 140;
     double gamma = 1.9;
     int params = 0;
-
-    if(argc>1) itermax = atoi(argv[1]);
-    if(argc>2) popsize = atoi(argv[2]);
-    if(argc>3) gamma = atof(argv[3]);
-    if(argc>4) params = atoi(argv[4]);
+    if(argc<3){
+        printf("INTRODUCE GRAPH AND DESTINATION NAME\n");
+        exit;
+    }
+    if(argc>3) itermax = atoi(argv[3]);
+    if(argc>4) popsize = atoi(argv[4]);
+    if(argc>5) gamma = atof(argv[5]);
+    if(argc>6) params = atoi(argv[6]);
     int N, i;
 
     FILE *f;
-    f = fopen("results/random_graph.txt","r");
+    f = fopen(argv[1],"r");
 
     fscanf(f,"%d",&N);
     struct node nodes[N];
@@ -240,13 +249,7 @@ int main(int argc, char *argv[]){
         exit;
     }
 
-    ACO(N,nodes, v, itermax, popsize, gamma);
-
-    if(params==1){
-        FILE* param_results = fopen("ACO_param_results/ACO_params.txt", "a");
-        fprintf(param_results, "%d %lf %lf\n", popsize, gamma, Fitness(v,N,nodes));
-        fclose(param_results);
-    }
+    ACO(N,nodes, v, itermax, popsize, gamma, params, argv);
 
     return 0;
 }

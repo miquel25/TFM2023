@@ -93,23 +93,23 @@ void Tweak(int *S, int *R, int root, int N){
 }
 
 
-double CoolDown(double T, int itermax, double Tmax, int phase){
+double CoolDown(double T, int k, int itermax, double Tmax, int phase, float rate){
     if (phase==0)
         T = 1.01*T;
     if (phase==1){
         T = T - Tmax/2;
-        T = 0.99*T+Tmax/2;
+        T = rate*T+Tmax/2;
     }
     if (phase==2){
         T = T - Tmax/10;
-        T = 0.99*T+Tmax/10;
+        T = rate*T+Tmax/10;
     }
     if (phase==3)
-        T = 0.99*T;
+        T = rate*T;
     return T;
 }
 
-int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
+int * SA(int root, int N, struct node nodes[N], int *best, int itermax, float rate, int params, char *argv[]){
     time_t tinit = clock();
     int i, j;
     int i2, j2;
@@ -117,7 +117,6 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
     char name[20]; 
     char num[5];
     double m=__DBL_MAX__;
-    m=5000;
 
     srand(time(0));
 
@@ -131,7 +130,7 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
     float total = 0;
     float accrate = 1;
     float R1 = 0.8;
-    float R2 = 0.1;
+
 
     S = (int *) malloc((N+1)*sizeof(int));
     if(S==NULL){
@@ -175,10 +174,10 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
             m = Fitness(S,N,nodes);
             for(i=0;i<N+1;i++)
                 best[i] = S[i];
-            k = 0;
+            k=0;
         }
 
-        T = CoolDown(T,itermax,Tmax,phase);
+        T = CoolDown(T,k,itermax,Tmax,phase, rate);
 
         k2++;
         k++;
@@ -213,7 +212,10 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
             k = 0;
             // printf("Phase 3\n");
         }
+
+
     }
+
 
     printf("SIMULATED ANNEALING\n----------------------------------------\n");
     for(i=0;i<N+1;i++)
@@ -223,21 +225,39 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
     printf("Total distance: %.2lf\n\n", Fitness(best,N,nodes));
     printf("%d %d \n", k, k2);
 
+    if(params==0){
     FILE *f;
-    f = fopen("results/BMK_SA.txt", "a");
+    f = fopen(argv[2], "a");
     fprintf(f,"%2lf %2lf\n",Fitness(best,N,nodes),(double)(clock()-tinit)/CLOCKS_PER_SEC);
     fclose(f);
+    }
+    
+    if(params==1){
+    FILE* param_results = fopen("parameters/SA.txt", "a");
+    fprintf(param_results, "%d %lf %lf\n", itermax, rate, Fitness(best,N,nodes));
+    fclose(param_results);
+    }
+
+
 
 }
 
 int main(int argc, char *argv[]){
+    if(argc<3){
+        printf("INTRODUCE GRAPH AND DESTINATION NAME\n");
+        exit;
+    }
     int itermax = 500;
-    if(argc>1) itermax = atoi(argv[1]);
+    float rate = 0.99;    
+    int params = 0;
+    if(argc>3) itermax = atoi(argv[3]);
+    if(argc>4) rate = atof(argv[4]);
+    if(argc>5) params = atof(argv[5]);
     int N, i;
 
 
     FILE *f;
-    f = fopen("results/random_graph.txt","r");
+    f = fopen(argv[1],"r");
 
     fscanf(f,"%d",&N);
     struct node nodes[N];
@@ -260,7 +280,6 @@ int main(int argc, char *argv[]){
         exit;
     }
 
-    SA(0,N,nodes, v, itermax);
-
+    SA(0,N,nodes, v, itermax, rate, params, argv);
     return 0;
 }

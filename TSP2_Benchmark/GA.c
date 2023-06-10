@@ -175,17 +175,16 @@ void Mutation(int N, struct node nodes[N], int* Q, float MR, int index){
     }
 }
 
-int * GA(int root, int N, struct node nodes[N], int *best, int itermax){ //best[N+1]
+int * GA(int root, int N, struct node nodes[N], int *best, int itermax, int popsize, float MR, int params, char *argv[]){ //best[N+1]
     time_t tinit = clock();
     int i, j;
     int i2, j2;
-    int popsize = 20;
     double m;
     char name[20]; 
     char num[5];
 
     int t = 5; // Tournament size
-    float MR = 0.3; // Mutation rate
+    
 
     for(i=0;i<N+1;i++)
         best[i]=0;
@@ -229,6 +228,7 @@ int * GA(int root, int N, struct node nodes[N], int *best, int itermax){ //best[
         }
     }
 
+    int iter=1;
     while(k<itermax){
         // Save best individual
         for(i=0;i<popsize;i++){
@@ -255,10 +255,6 @@ int * GA(int root, int N, struct node nodes[N], int *best, int itermax){ //best[
         P = Q;
         Q = temp;
 
-        FILE *f;
-        f = fopen("results/BMK_GA.txt", "a");
-        fprintf(f,"%2lf %2lf\n",Fitness(best,N,nodes),(double)(clock()-tinit)/CLOCKS_PER_SEC);
-        fclose(f);
         k++;
     }
 
@@ -269,21 +265,39 @@ int * GA(int root, int N, struct node nodes[N], int *best, int itermax){ //best[
 
     printf("Total distance: %.2lf\n\n", Fitness(best,N,nodes));
 
+    if(params==0){
     FILE *f;
-    f = fopen("results/BMK_GA.txt", "a");
+    f = fopen(argv[2], "a");
     fprintf(f,"%2lf %2lf\n",Fitness(best,N,nodes),(double)(clock()-tinit)/CLOCKS_PER_SEC);
     fclose(f);
+    }
+
+    if(params==1){
+    FILE* param_results = fopen("parameters/GA.txt", "a");
+    fprintf(param_results, "%d %lf %lf\n", popsize, MR, Fitness(best,N,nodes));
+    fclose(param_results);
+    }
 
 }
 
 int main(int argc, char *argv[]){
+    if(argc<3){
+        printf("INTRODUCE GRAPH AND DESTINATION NAME\n");
+        exit;
+    }
     int itermax = 100;
-    if(argc>1) itermax = atoi(argv[1]);
+    int popsize = 20;
+    float MR = 0.3; // Mutation rate
+    int params = 0;
+    if(argc>3) itermax = atoi(argv[3]);
+    if(argc>4) popsize = atoi(argv[4]);
+    if(argc>5) MR = atof(argv[5]);
+    if(argc>6) params = atoi(argv[6]);
     int N, i;
  
 
     FILE *f;
-    f = fopen("results/random_graph.txt","r");
+    f = fopen(argv[1],"r");
 
     fscanf(f,"%d",&N);
     struct node nodes[N];
@@ -306,7 +320,7 @@ int main(int argc, char *argv[]){
         exit;
     }
 
-    GA(0,N,nodes, v, itermax);
+    GA(0,N,nodes, v, itermax, popsize, MR, params, argv);
 
     return 0;
 }

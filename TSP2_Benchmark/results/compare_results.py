@@ -52,16 +52,26 @@ def mean_plot(sa,ga,aco, nn ,ni):
     umean = [ustd(aco), ustd(ga),ustd(sa)]
 
     fig, (ax2, ax1) = plt.subplots(2,1,sharex=True,dpi=200)
+    # fig, ax1 = plt.subplots(dpi=200)
     ax1.plot(['Nearest Neighbour','Nearest Insertion'],[nn,ni],'o',ms=3)
     ax1.errorbar(labels,mean,yerr=umean,fmt='.', capsize=3, color='C0')
     ax2.plot(['Nearest Neighbour','Nearest Insertion'],[nn,ni],'o',ms=3)
     ax2.errorbar(labels,mean,yerr=umean,fmt='.', capsize=3, color='C0')
-    ax1.set_ylim(420,440)
-    ax2.set_ylim(445,465)
+    ax1.set_ylim(-0.01,0.08)
+    ax2.set_ylim(1.69,1.78)
     plt.xticks(rotation=-30, ha='left')
-    fig.text(0.0, 0.5, "tour length (km)", va='center', rotation='vertical')
+    # fig.text(0.0, 0.5, "tour length (km)", va='center', rotation='vertical')
+    fig.text(0.0, 0.5, "computation time (s)", va='center', rotation='vertical')
     plt.show()
 
 hist(sa,ga,aco)
-mean_plot(sa[0],ga[0],aco[0],nn[0],ni[0])
-# mean_plot(sa[1],ga[1],aco[1],nn[1],ni[1])
+# mean_plot(sa[0],ga[0],aco[0],nn[0],ni[0])
+mean_plot(sa[1],ga[1],aco[1],nn[1],ni[1])
+
+
+# plt.hist(aco[0],bins=25)
+# plt.show()
+# plt.hist(ga[0],bins=25)
+# plt.show()
+# plt.hist(sa[0],bins=25)
+# plt.show()
