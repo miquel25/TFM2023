@@ -229,7 +229,6 @@ int * GA(int root, int N, struct node nodes[N], int *best, int itermax){ //best[
         }
     }
 
-    int iter=1;
     while(k<itermax){
         // Save best individual
         for(i=0;i<popsize;i++){
@@ -239,6 +238,7 @@ int * GA(int root, int N, struct node nodes[N], int *best, int itermax){ //best[
                 m = F;
                 for(j=0;j<N+1;j++)
                     best[j]=P[i*(N+1)+j];  
+                k=0;
             }
         }
         // Select Parents
@@ -255,6 +255,10 @@ int * GA(int root, int N, struct node nodes[N], int *best, int itermax){ //best[
         P = Q;
         Q = temp;
 
+        FILE *f;
+        f = fopen("results/BMK_GA.txt", "a");
+        fprintf(f,"%2lf %2lf\n",Fitness(best,N,nodes),(double)(clock()-tinit)/CLOCKS_PER_SEC);
+        fclose(f);
         k++;
     }
 
@@ -273,7 +277,7 @@ int * GA(int root, int N, struct node nodes[N], int *best, int itermax){ //best[
 }
 
 int main(int argc, char *argv[]){
-    int itermax = 10000;
+    int itermax = 100;
     if(argc>1) itermax = atoi(argv[1]);
     int N, i;
  

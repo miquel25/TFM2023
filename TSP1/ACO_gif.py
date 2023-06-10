@@ -14,16 +14,15 @@ def plot_gif(name='ACO'):
     fig, ax = plt.subplots()
     camera = Camera(fig)
 
-    for n in range(N):
-        if n%10==0:
-            p = pd.read_csv(name+'_gif/'+str(n)+'.txt', delimiter='\t', header=None)
-            p[2] = p[2]/max(p[2])
-            for i in range(p.shape[0]):
-                ax.plot([df[0][p[0][i]],df[0][p[1][i]]],[df[1][p[0][i]],df[1][p[1][i]]],'C0-',linewidth=2, alpha=p[2][i])
-                j = i
-            ax.plot(df[0],df[1],'ko',ms=7)
-            ax.text(0,0,f"Iteration: {n}")
-            camera.snap()
+    for n in np.arange(0,N*100,100):
+        p = pd.read_csv(name+'_gif/'+str(n)+'.txt', delimiter='\t', header=None)
+        p[2] = p[2]/max(p[2])
+        for i in range(p.shape[0]):
+            ax.plot([df[0][p[0][i]],df[0][p[1][i]]],[df[1][p[0][i]],df[1][p[1][i]]],'C0-',linewidth=2, alpha=p[2][i])
+            j = i
+        ax.plot(df[0],df[1],'ko',ms=7)
+        ax.text(0,0,f"Iteration: {n}")
+        camera.snap()
     plt.show()
     animation = camera.animate()
     try: animation.save('results/'+name+'.gif', writer='imagemagick')

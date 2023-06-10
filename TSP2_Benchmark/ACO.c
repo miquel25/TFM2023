@@ -162,7 +162,8 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, doub
                 // printf("%.0lf -> %.0lf\n",m, F);
                 m = F;
                 for(j=0;j<N+1;j++)
-                    best[j]=P[i][j];  
+                    best[j]=P[i][j]; 
+                k = 0; 
             }
         }
         // Evaporate pheromones
@@ -184,6 +185,7 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, doub
                 acc(p,i2,j2)=acc(p,i2,j2)+F;
             }
         }
+        
     k++;
     }
 
@@ -203,10 +205,11 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, doub
 }
 
 int main(int argc, char *argv[]){
-    int itermax = 10000;
+    int itermax = 1000;
     int popsize = 140;
     double gamma = 1.9;
     int params = 0;
+
     if(argc>1) itermax = atoi(argv[1]);
     if(argc>2) popsize = atoi(argv[2]);
     if(argc>3) gamma = atof(argv[3]);

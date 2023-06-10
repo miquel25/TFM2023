@@ -185,6 +185,7 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, doub
         }
         // printf("%lf\n",F);
     // printf("%2lf, %2lf\n",Fitness(best,N,nodes), m);
+    if(k%100){
     char name[] = "ACO_gif/";
     sprintf(num, "%d", k);
     strcat(name, num);
@@ -192,6 +193,7 @@ int * ACO(int N, struct node nodes[N], int *best, int itermax, int popsize, doub
     FILE *gif = fopen(name, "w");
     print_graph(N, p, gif);
     fclose(gif);
+    }
     k++;
     }
 

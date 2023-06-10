@@ -93,7 +93,7 @@ void Tweak(int *S, int *R, int root, int N){
 }
 
 
-double CoolDown(double T, int k, int itermax, double Tmax, int phase){
+double CoolDown(double T, int itermax, double Tmax, int phase){
     if (phase==0)
         T = 1.01*T;
     if (phase==1){
@@ -120,9 +120,6 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
     m=5000;
 
     srand(time(0));
-
-    FILE *lvst = fopen("SAlvst.txt","w");
-    FILE *mvst = fopen("SAmvst.txt","w");
 
     int *S, *R, *aux;
     double dE;
@@ -178,9 +175,10 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
             m = Fitness(S,N,nodes);
             for(i=0;i<N+1;i++)
                 best[i] = S[i];
+            k = 0;
         }
 
-        T = CoolDown(T,k,itermax,Tmax,phase);
+        T = CoolDown(T,itermax,Tmax,phase);
 
         k2++;
         k++;
@@ -201,27 +199,21 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
             Tmax = T;
             k = 0;
             k2 = 0;
-            printf("Phase 1\n");
+            // printf("Phase 1\n");
         }
 
         if (phase==1 && k > itermax/2){
             phase=2;
             k = 0;
-            printf("Phase 2\n");
+            // printf("Phase 2\n");
         }
 
         if (phase==2 && k > itermax/2){
             phase=3;
             k = 0;
-            printf("Phase 3\n");
+            // printf("Phase 3\n");
         }
-
-        fprintf(lvst,"%lf\n",Fitness(S,N,nodes));
-        // fprintf(mvst,"%lf\n",m);
-        fprintf(mvst,"%lf\n",T);
-        // fprintf(mvst,"%lf\n",accrate);
     }
-    fclose(lvst);
 
     printf("SIMULATED ANNEALING\n----------------------------------------\n");
     for(i=0;i<N+1;i++)
@@ -239,7 +231,7 @@ int * SA(int root, int N, struct node nodes[N], int *best, int itermax){
 }
 
 int main(int argc, char *argv[]){
-    int itermax = 5000;
+    int itermax = 500;
     if(argc>1) itermax = atoi(argv[1]);
     int N, i;
 

@@ -1,14 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
-# plt.style.use('seaborn-whitegrid')
+plt.style.use('seaborn-whitegrid')
+plt.rc( 'font', size=18, family="DejaVu Sans" )
+plt.rc( 'text', usetex=True)
 import pandas as pd
+
+def ustd(list):
+    return np.var(list)/np.sqrt(len(list))
 
 nn = np.loadtxt("BMK_NN.txt")
 ni = np.loadtxt("BMK_NI.txt")
 
 sa = pd.read_csv("BMK_SA.txt", sep=' ', header=None)
 ga = pd.read_csv("BMK_GA.txt", sep=' ', header=None)
-aco = pd.read_csv("BMK_GA.txt", sep=' ', header=None)
+aco = pd.read_csv("BMK_ACO.txt", sep=' ', header=None)
 
 
 realSolution = np.loadtxt("best_benchmark.txt")
@@ -20,9 +25,12 @@ for i in range(1,len(realSolution)):
 
 
 def hist(sa,ga,aco):
-    ga_heights, ga_bins = np.histogram(ga[0])
+    plt.figure(dpi=200)
+    bins=np.linspace(min(aco[0]),465,15)
+    aco_heights, aco_bins = np.histogram(aco[0], bins=bins)
+    ga_heights, ga_bins = np.histogram(ga[0], bins=aco_bins)
     sa_heights, sa_bins = np.histogram(sa[0], bins=ga_bins)
-    aco_heights, aco_bins = np.histogram(aco[0], bins=ga_bins)
+    
     width = (ga_bins[1] - ga_bins[0])/4
 
     plt.bar(aco_bins[:-1]-width, aco_heights, width=width, label='Ant Colony Optimization')
@@ -30,19 +38,30 @@ def hist(sa,ga,aco):
     plt.bar(sa_bins[:-1]+width, sa_heights, width=width, label='Simulated Annealing')
     
     plt.axvline(Freal,color='r',linestyle='--',label='Analytic solution')
-    plt.legend()
+    plt.axvline(nn[0],color='C4',linestyle='-',label='Nearest Neighbour')
+    plt.axvline(ni[0],color='C5',linestyle='-',label='Nearest Insertion')
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=14)
+    plt.xlabel("tour length (km)")
+    plt.ylabel("frequency")
     plt.show()
 
 
-def mean_plot(sa,ga,aco):
+def mean_plot(sa,ga,aco, nn ,ni):
     labels = ['Ant Colony Optimization','Genetic Algorithm','Simulated Anneling']
-    mean = [np.mean(aco[0]), np.mean(ga[0]),np.mean(sa[0])]
-    umean = [np.var(aco[0]), np.var(ga[0]),np.var(sa[0])]
-    
-    plt.plot(['Nearest Neighbour','Nearest Insertion'],[nn[0],ni[0]],'o',ms=3)
-    plt.errorbar(labels,mean,yerr=umean,fmt='.', capsize=5, color='C0')
-    plt.xticks(rotation=-30, ha='left')
-    plt.axhline(Freal,linestyle='--',color='r')
+    mean = [np.mean(aco), np.mean(ga),np.mean(sa)]
+    umean = [ustd(aco), ustd(ga),ustd(sa)]
 
-# hist(sa,ga,aco)
-mean_plot(sa,ga,aco)
+    fig, (ax2, ax1) = plt.subplots(2,1,sharex=True,dpi=200)
+    ax1.plot(['Nearest Neighbour','Nearest Insertion'],[nn,ni],'o',ms=3)
+    ax1.errorbar(labels,mean,yerr=umean,fmt='.', capsize=3, color='C0')
+    ax2.plot(['Nearest Neighbour','Nearest Insertion'],[nn,ni],'o',ms=3)
+    ax2.errorbar(labels,mean,yerr=umean,fmt='.', capsize=3, color='C0')
+    ax1.set_ylim(420,440)
+    ax2.set_ylim(445,465)
+    plt.xticks(rotation=-30, ha='left')
+    fig.text(0.0, 0.5, "tour length (km)", va='center', rotation='vertical')
+    plt.show()
+
+hist(sa,ga,aco)
+mean_plot(sa[0],ga[0],aco[0],nn[0],ni[0])
+# mean_plot(sa[1],ga[1],aco[1],nn[1],ni[1])
