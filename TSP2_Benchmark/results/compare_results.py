@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-whitegrid')
-plt.rc( 'font', size=18, family="DejaVu Sans" )
+plt.rc( 'font', size=14, family="DejaVu Sans" )
 plt.rc( 'text', usetex=True)
 import pandas as pd
 
@@ -37,10 +37,10 @@ def hist(sa,ga,aco):
     plt.bar(ga_bins[:-1], ga_heights, width=width, label='Genetic Algorithm')
     plt.bar(sa_bins[:-1]+width, sa_heights, width=width, label='Simulated Annealing')
     
-    plt.axvline(Freal,color='r',linestyle='--',label='Analytic solution')
-    plt.axvline(nn[0],color='C4',linestyle='-',label='Nearest Neighbour')
-    plt.axvline(ni[0],color='C5',linestyle='-',label='Nearest Insertion')
-    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=14)
+    plt.axvline(Freal,color='k',linestyle='--',label='Analytic solution')
+    plt.axvline(nn[0],color='C3',linestyle='-',label='Nearest Neighbour',lw=4)
+    plt.axvline(ni[0],color='C4',linestyle='-',label='Nearest Insertion', lw=4)
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=12)
     plt.xlabel("tour length (km)")
     plt.ylabel("frequency")
     plt.show()
@@ -54,16 +54,29 @@ def mean_plot(sa,ga,aco, nn ,ni):
     fig, (ax2, ax1) = plt.subplots(2,1,sharex=True,dpi=200)
     # fig, ax1 = plt.subplots(dpi=200)
     ax1.plot(['Nearest Neighbour','Nearest Insertion'],[nn,ni],'o',ms=3)
-    ax1.errorbar(labels,mean,yerr=umean,fmt='.', capsize=3, color='C0')
+    ax1.errorbar(labels,mean,yerr=umean,fmt='.', elinewidth=0.5, capsize=2, color='C0')
     ax2.plot(['Nearest Neighbour','Nearest Insertion'],[nn,ni],'o',ms=3)
-    ax2.errorbar(labels,mean,yerr=umean,fmt='.', capsize=3, color='C0')
-    # ax1.set_ylim(-0.01,0.08)
-    # ax2.set_ylim(1.69,1.78)
-    ax1.set_ylim(415,430)
-    ax2.set_ylim(455,470)
-    plt.xticks(rotation=-30, ha='left')
+    ax2.errorbar(labels,mean,yerr=umean,fmt='.', elinewidth=0.5, capsize=2, color='C0')
+    # ax1.set_ylim(-0.005,0.075)
+    # ax2.set_ylim(1.695,1.775)
+    ax1.set_ylim(418.5,426.5)
+    ax2.set_ylim(458.5,466.5)
+    plt.xticks(rotation=-45, ha='left')
     fig.text(0.0, 0.5, "tour length (km)", va='center', rotation='vertical')
     # fig.text(0.0, 0.5, "computation time (s)", va='center', rotation='vertical')
+
+
+    ax1.spines['top'].set_linestyle((0,(5,5)))
+    ax2.spines['bottom'].set_linestyle((0,(5,5)))
+    d = .015  # how big to make the diagonal lines in axes coordinates
+    # arguments to pass to plot, just so we don't keep repeating them
+    kwargs = dict(transform=ax2.transAxes, color='lightgrey', lw=1, clip_on=False)
+    ax2.plot((-d, +d), (-d, +d), **kwargs)        # top-left diagonal
+    ax2.plot((1 - d, 1 + d), (-d, +d), **kwargs)  # top-right diagonal
+
+    kwargs.update(transform=ax1.transAxes)  # switch to the bottom axes
+    ax1.plot((-d, +d), (1 - d, 1 + d), **kwargs)  # bottom-left diagonal
+    ax1.plot((1 - d, 1 + d), (1 - d, 1 + d), **kwargs)  # bottom-right diagonal
     plt.show()
 
 hist(sa,ga,aco)
