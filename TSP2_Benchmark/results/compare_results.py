@@ -62,7 +62,7 @@ def mean_plot(sa,ga,aco, nn ,ni):
     ax1.set_ylim(418.5,426.5)
     ax2.set_ylim(458.5,466.5)
     plt.xticks(rotation=-45, ha='left')
-    fig.text(0.0, 0.5, "tour length (km)", va='center', rotation='vertical')
+    fig.text(0.0, 0.5, "Expected value (km)", va='center', rotation='vertical')
     # fig.text(0.0, 0.5, "computation time (s)", va='center', rotation='vertical')
 
 
