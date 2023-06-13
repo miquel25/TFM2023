@@ -37,7 +37,7 @@ def hist(sa,ga,aco):
     plt.bar(ga_bins[:-1], ga_heights, width=width, label='Genetic Algorithm')
     plt.bar(sa_bins[:-1]+width, sa_heights, width=width, label='Simulated Annealing')
     
-    plt.axvline(Freal,color='k',linestyle='--',label='Analytic solution')
+    plt.axvline(Freal,color='k',linestyle='--',label='Exact solution')
     plt.axvline(nn[0],color='C3',linestyle='-',label='Nearest Neighbour',lw=4)
     plt.axvline(ni[0],color='C4',linestyle='-',label='Nearest Insertion', lw=4)
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=12)
