@@ -27,6 +27,7 @@ for i in range(1,len(realSolution)):
 def hist(sa,ga,aco):
     plt.figure(dpi=200)
     bins=np.linspace(min(aco[0]),465,15)
+    print(bins)
     aco_heights, aco_bins = np.histogram(aco[0], bins=bins)
     ga_heights, ga_bins = np.histogram(ga[0], bins=aco_bins)
     sa_heights, sa_bins = np.histogram(sa[0], bins=ga_bins)
@@ -50,6 +51,8 @@ def mean_plot(sa,ga,aco, nn ,ni):
     labels = ['Ant Colony Optimization','Genetic Algorithm','Simulated Annealing']
     mean = [np.mean(aco), np.mean(ga),np.mean(sa)]
     umean = [ustd(aco), ustd(ga),ustd(sa)]
+    print(mean)
+    print(umean)
 
     fig, (ax2, ax1) = plt.subplots(2,1,sharex=True,dpi=200)
     # fig, ax1 = plt.subplots(dpi=200)
@@ -57,13 +60,13 @@ def mean_plot(sa,ga,aco, nn ,ni):
     ax1.errorbar(labels,mean,yerr=umean,fmt='.', elinewidth=0.5, capsize=2, color='C0')
     ax2.plot(['Nearest Neighbour','Nearest Insertion'],[nn,ni],'o',ms=3)
     ax2.errorbar(labels,mean,yerr=umean,fmt='.', elinewidth=0.5, capsize=2, color='C0')
-    # ax1.set_ylim(-0.005,0.075)
-    # ax2.set_ylim(1.695,1.775)
-    ax1.set_ylim(418.5,426.5)
-    ax2.set_ylim(458.5,466.5)
+    ax1.set_ylim(-0.005,0.075)
+    ax2.set_ylim(1.695,1.775)
+    # ax1.set_ylim(418.5,426.5)
+    # ax2.set_ylim(458.5,466.5)
     plt.xticks(rotation=-45, ha='left')
-    fig.text(0.0, 0.5, "Expected value (km)", va='center', rotation='vertical')
-    # fig.text(0.0, 0.5, "computation time (s)", va='center', rotation='vertical')
+    # fig.text(0.0, 0.5, "Expected value (km)", va='center', rotation='vertical')
+    fig.text(0.0, 0.5, "computation time (s)", va='center', rotation='vertical')
 
 
     ax1.spines['top'].set_linestyle((0,(5,5)))
@@ -79,9 +82,9 @@ def mean_plot(sa,ga,aco, nn ,ni):
     ax1.plot((1 - d, 1 + d), (1 - d, 1 + d), **kwargs)  # bottom-right diagonal
     plt.show()
 
-hist(sa,ga,aco)
-mean_plot(sa[0],ga[0],aco[0],nn[0],ni[0])
-# mean_plot(sa[1],ga[1],aco[1],nn[1],ni[1])
+# hist(sa,ga,aco)
+# mean_plot(sa[0],ga[0],aco[0],nn[0],ni[0])
+mean_plot(sa[1],ga[1],aco[1],nn[1],ni[1])
 
 
 # plt.hist(aco[0],bins=25)

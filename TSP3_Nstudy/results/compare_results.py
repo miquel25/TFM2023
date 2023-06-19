@@ -8,8 +8,8 @@ import pandas as pd
 def ustd(list):
     return np.std(list)/np.sqrt(len(list))
 
-N = np.arange(10,100,10)
-dlist = np.arange(2,10,2)
+N = np.arange(10,110,10)
+dlist = np.arange(2,12,2)
 
 def discrepance(N,dlist):
     nn = []
